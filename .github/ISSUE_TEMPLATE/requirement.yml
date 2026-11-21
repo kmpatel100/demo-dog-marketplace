@@ -1,0 +1,409 @@
+name: Requirement
+description: Define a testable requirement (functional, security, or non-functional) using RFC 2119 language.
+title: "[REQ-MODULE-###] "
+labels: ["requirement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for one atomic, testable requirement. Context: [ARCHITECTURE.md](../blob/HEAD/ARCHITECTURE.md) and [SECURITY.md](../blob/HEAD/SECURITY.md).
+        Stack: a React client and a Django REST API backed by an RDBMS. Actors: seller, shelter, dog lover.
+        Leave unknowns as `UNKNOWN` or `TO BE DECIDED`. Do not guess.
+
+  # ---------------- Metadata ----------------
+  - type: markdown
+    attributes:
+      value: "## Metadata"
+  - type: input
+    id: req_id
+    attributes:
+      label: Requirement ID
+      description: "Format: REQ-[MODULE]-[###]. Use the same ID in the issue title."
+      placeholder: REQ-LISTING-001
+    validations:
+      required: true
+  - type: input
+    id: req_title
+    attributes:
+      label: Title
+      placeholder: Sellers can only modify their own listings
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      value: "0.1.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: status
+    attributes:
+      label: Status
+      options:
+        - Draft
+        - Proposed
+        - Approved
+        - Implemented
+        - Verified
+        - Deprecated
+      default: 0
+    validations:
+      required: true
+  - type: input
+    id: author
+    attributes:
+      label: Author
+      placeholder: GitHub handle
+    validations:
+      required: true
+  - type: input
+    id: last_updated
+    attributes:
+      label: Last Updated
+      placeholder: YYYY-MM-DD
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - P0 - Critical
+        - P1 - High
+        - P2 - Medium
+        - P3 - Low
+    validations:
+      required: true
+  - type: dropdown
+    id: classification
+    attributes:
+      label: Classification
+      options:
+        - Functional
+        - Security
+        - Non-functional (performance, availability, scale)
+        - Compliance / Regulatory
+        - Data / Privacy
+    validations:
+      required: true
+
+  # ---------------- Requirement ----------------
+  - type: markdown
+    attributes:
+      value: "## Requirement"
+  - type: textarea
+    id: description
+    attributes:
+      label: Description (RFC 2119)
+      description: State the requirement with MUST / MUST NOT / SHALL / SHALL NOT. Write one obligation per line, and make each one testable.
+      value: |
+        The system MUST ...
+        The system MUST NOT ...
+    validations:
+      required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Rationale
+      description: Why this requirement exists. Link the business need, threat, or SECURITY.md rule.
+    validations:
+      required: true
+
+  # ---------------- Scope ----------------
+  - type: markdown
+    attributes:
+      value: "## Scope"
+  - type: textarea
+    id: applies_to
+    attributes:
+      label: Applies To
+      description: Features, endpoints, or workflows covered. Also state what is out of scope.
+      placeholder: |
+        In scope: PUT/PATCH/DELETE /api/listings/{id}
+        Out of scope: public listing search
+    validations:
+      required: true
+  - type: dropdown
+    id: components
+    attributes:
+      label: Components
+      multiple: true
+      options:
+        - React client
+        - Django REST API
+        - RDBMS
+        - Django admin
+        - CI/CD (TO BE DECIDED)
+        - Deployment / infrastructure (TO BE DECIDED)
+        - External service (specify in Dependencies)
+    validations:
+      required: true
+  - type: dropdown
+    id: actors
+    attributes:
+      label: Actors
+      multiple: true
+      options:
+        - Dog seller
+        - Shelter
+        - Dog lover (authenticated)
+        - Anonymous visitor
+        - Staff / admin
+        - System / background job
+    validations:
+      required: true
+  - type: dropdown
+    id: data_classification
+    attributes:
+      label: Data Classification
+      description: The highest sensitivity of data this requirement touches.
+      options:
+        - Public (published listings)
+        - Internal
+        - Confidential (PII such as seller/shelter contact details)
+        - Restricted (credentials, secrets, payment data)
+    validations:
+      required: true
+
+  # ---------------- Security Context ----------------
+  - type: markdown
+    attributes:
+      value: "## Security Context"
+  - type: dropdown
+    id: defense_layer
+    attributes:
+      label: Defense Layer
+      multiple: true
+      options:
+        - Network / edge (TLS, HSTS)
+        - HTTP boundary (CORS, CSRF, headers)
+        - Authentication / session
+        - Authorization (object-level / role)
+        - Input validation / output encoding
+        - Business logic
+        - Data storage
+        - Secrets management
+        - Logging / monitoring / error handling
+        - Supply chain / CI-CD
+        - N/A (non-security requirement)
+    validations:
+      required: true
+  - type: textarea
+    id: threats
+    attributes:
+      label: Threats Addressed
+      description: Specific threats or abuse cases, for example IDOR, mass assignment, CSRF, XSS in listing text, credential stuffing.
+      placeholder: "IDOR: seller A edits seller B's listing by changing the {id} path parameter."
+  - type: dropdown
+    id: trust_boundary
+    attributes:
+      label: Trust Boundary
+      multiple: true
+      options:
+        - Browser -> Django REST API
+        - Django REST API -> RDBMS
+        - Django REST API -> external service
+        - Staff -> Django admin
+        - CI/CD -> deployment environment
+        - N/A
+  - type: textarea
+    id: zero_trust
+    attributes:
+      label: Zero Trust Consideration
+      description: "How the requirement avoids implicit trust (NIST SP 800-207): verify every request explicitly, grant least privilege, and never trust client-supplied identity, role, or ownership."
+      placeholder: Ownership is resolved server-side from the authenticated session. The owner_id in the request body is ignored.
+
+  # ---------------- Standards Alignment ----------------
+  - type: markdown
+    attributes:
+      value: |
+        ## Standards Alignment
+        Cite specific control IDs, or write `N/A`.
+  - type: input
+    id: owasp_asvs
+    attributes:
+      label: OWASP ASVS
+      placeholder: "e.g. V4.2.1 (or N/A)"
+  - type: input
+    id: owasp_aisvs
+    attributes:
+      label: OWASP AISVS
+      description: Only applies if the requirement involves AI/ML components.
+      placeholder: N/A
+  - type: input
+    id: nist_800_53
+    attributes:
+      label: NIST SP 800-53
+      placeholder: "e.g. AC-3, AC-6 (or N/A)"
+  - type: input
+    id: nist_800_207
+    attributes:
+      label: NIST SP 800-207
+      placeholder: "e.g. Tenet 3 - per-session access (or N/A)"
+  - type: input
+    id: regulatory
+    attributes:
+      label: Regulatory
+      description: Compliance scope is UNKNOWN (see SECURITY.md). Cite only confirmed obligations.
+      placeholder: UNKNOWN
+  - type: input
+    id: other_standards
+    attributes:
+      label: Other
+      placeholder: "e.g. OWASP API Security Top 10 - API1:2023 (or N/A)"
+
+  # ---------------- Acceptance Criteria ----------------
+  - type: markdown
+    attributes:
+      value: |
+        ## Acceptance Criteria
+        Use Given / When / Then. Every criterion must be verifiable by an automated test.
+  - type: textarea
+    id: ac_01
+    attributes:
+      label: AC-01 - Positive case
+      value: |
+        GIVEN
+        WHEN
+        THEN
+    validations:
+      required: true
+  - type: textarea
+    id: ac_02
+    attributes:
+      label: AC-02 - Invalid / malicious input is rejected
+      description: Malformed, oversized, unexpected-field, or hostile input is rejected with no side effects.
+      value: |
+        GIVEN
+        WHEN
+        THEN the request is rejected (4xx), no state changes, and the response leaks no internal detail
+    validations:
+      required: true
+  - type: textarea
+    id: ac_03
+    attributes:
+      label: AC-03 - Negative case
+      description: An unauthorized actor, a missing precondition, or a forbidden action is denied.
+      value: |
+        GIVEN
+        WHEN
+        THEN access is denied (401/403/404) and the attempt is logged
+    validations:
+      required: true
+  - type: textarea
+    id: ac_additional
+    attributes:
+      label: Additional criteria (AC-04+)
+
+  # ---------------- Failure Behavior ----------------
+  - type: markdown
+    attributes:
+      value: "## Failure Behavior"
+  - type: textarea
+    id: on_invalid_input
+    attributes:
+      label: On Invalid Input
+      value: Reject with 400/422 and field-level errors. Do not partially apply changes. Do not echo raw input back unescaped.
+    validations:
+      required: true
+  - type: textarea
+    id: on_system_error
+    attributes:
+      label: On System Error (fail closed)
+      description: On dependency or internal failure, the system MUST deny the action rather than allow it.
+      value: Fail closed. Deny the operation, roll back the transaction, and return a generic 5xx with no stack trace, SQL, or internal paths.
+    validations:
+      required: true
+  - type: textarea
+    id: alerting
+    attributes:
+      label: Alerting
+      description: What is logged or alerted, and to whom. Never log passwords, session IDs, tokens, or PII.
+      placeholder: Log the authorization denial with user ID, endpoint, and object ID. Alerting channel is TO BE DECIDED.
+
+  # ---------------- Test Strategy ----------------
+  - type: markdown
+    attributes:
+      value: "## Test Strategy"
+  - type: textarea
+    id: test_unit
+    attributes:
+      label: Unit
+      placeholder: Permission class / serializer validation tests
+  - type: textarea
+    id: test_integration
+    attributes:
+      label: Integration
+      placeholder: API tests against a real test database covering AC-01..AC-03
+  - type: textarea
+    id: test_security
+    attributes:
+      label: Security
+      placeholder: IDOR, mass-assignment, CSRF, and injection cases; dependency/secret scan in CI
+  - type: textarea
+    id: test_compliance
+    attributes:
+      label: Compliance
+      placeholder: Evidence mapping to the cited controls (or N/A)
+  - type: checkboxes
+    id: coverage
+    attributes:
+      label: Coverage
+      options:
+        - label: Code implementing this requirement MUST reach >= 80% branch coverage.
+          required: true
+        - label: Every acceptance criterion has at least one automated test.
+          required: true
+
+  # ---------------- Dependencies ----------------
+  - type: markdown
+    attributes:
+      value: "## Dependencies"
+  - type: textarea
+    id: dep_upstream
+    attributes:
+      label: Upstream
+      description: Requirements or decisions this one depends on (REQ IDs, open SECURITY.md placeholders).
+      placeholder: "REQ-AUTH-001; {{ROLE_MATRIX}} must be resolved"
+  - type: textarea
+    id: dep_downstream
+    attributes:
+      label: Downstream
+      description: Requirements or features that depend on this one.
+  - type: textarea
+    id: dep_external
+    attributes:
+      label: External
+      description: Third-party services, libraries, or infrastructure.
+      placeholder: N/A
+
+  # ---------------- Implementation Notes ----------------
+  - type: markdown
+    attributes:
+      value: "## Implementation Notes"
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints
+      description: Technical, architectural, or policy constraints, for example from ARCHITECTURE.md or SECURITY.md.
+      placeholder: Enforce on the Django API, never only in the React client. Use the ORM only, with no raw SQL built from strings.
+  - type: textarea
+    id: anti_patterns
+    attributes:
+      label: Anti-Patterns
+      description: Approaches that MUST NOT be used.
+      placeholder: |
+        - Trusting owner_id / role from the request body
+        - Authorization checks only in the React UI
+        - Returning stack traces or DB errors to clients
+  - type: textarea
+    id: ai_guidance
+    attributes:
+      label: AI Development Guidance
+      description: Instructions for AI coding agents implementing this requirement.
+      value: |
+        - Follow AGENTS.md, ARCHITECTURE.md, and SECURITY.md.
+        - Implement only what this requirement states. Raise UNKNOWN items instead of assuming them.
+        - Write tests for AC-01..AC-03 before or alongside the implementation.
+        - Do not introduce new dependencies, secrets, or endpoints without stating them here.
